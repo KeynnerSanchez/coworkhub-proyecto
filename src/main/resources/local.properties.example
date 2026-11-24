@@ -1,0 +1,4 @@
+# Copia este archivo como "local.properties" y pon los datos de TU MySQL.
+# local.properties esta en .gitignore: no se sube a GitHub.
+spring.datasource.username=${DB_USERNAME:root}
+spring.datasource.password=${DB_PASSWORD:tu_clave}

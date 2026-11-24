@@ -1,0 +1,1204 @@
+{
+  "info": {
+    "name": "CoWorkHub",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Reinicia la app antes de correr la coleccion (la base se recrea con datos de prueba). Corre primero 00 - Login."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "fechaConsulta",
+      "value": "2030-06-03"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "function f(dias, hora) {",
+          "  var d = new Date(); d.setDate(d.getDate() + dias);",
+          "  var p = function (n) { return String(n).padStart(2, '0'); };",
+          "  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + hora;",
+          "}",
+          "pm.collectionVariables.set('d10_10', f(10, '10:00:00'));",
+          "pm.collectionVariables.set('d10_12', f(10, '12:00:00'));",
+          "pm.collectionVariables.set('d10_13', f(10, '13:00:00'));",
+          "pm.collectionVariables.set('d10_14', f(10, '14:00:00'));",
+          "pm.collectionVariables.set('d10_1445', f(10, '14:45:00'));",
+          "pm.collectionVariables.set('d10_2130', f(10, '21:30:00'));",
+          "pm.collectionVariables.set('d10_2230', f(10, '22:30:00'));",
+          "pm.collectionVariables.set('d12_10', f(12, '10:00:00'));",
+          "pm.collectionVariables.set('d12_11', f(12, '11:00:00'));"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Login",
+      "item": [
+        {
+          "name": "Login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('tokenAdmin', pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login recepcion",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('tokenRecepcion', pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"recepcion\",\n  \"password\": \"Recep123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login ana (MEMBER)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('tokenAna', pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"ana\",\n  \"password\": \"Ana12345\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login luis (MEMBER)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set('tokenLuis', pm.response.json().token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"luis\",\n  \"password\": \"Luis12345\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Perfil de ana",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/perfil",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "perfil"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Escenarios del enunciado",
+      "item": [
+        {
+          "name": "01 - Reservar sala libre con 2 servicios (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('Costos calculados', function () { var j = pm.response.json(); pm.expect(j.servicesCost).to.eql(12000); pm.expect(j.status).to.eql('PENDING'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"miembroId\": 1,\n  \"salaId\": 2,\n  \"startTime\": \"{{d10_10}}\",\n  \"endTime\": \"{{d10_12}}\",\n  \"attendees\": 3,\n  \"services\": [\n    {\n      \"servicioId\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"servicioId\": 2,\n      \"quantity\": 1\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "02 - Misma sala, mismo horario (409 RN-01)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Codigo RN-01', function () { pm.expect(pm.response.json().codigo).to.eql('RN-01'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"miembroId\": 1,\n  \"salaId\": 2,\n  \"startTime\": \"{{d10_10}}\",\n  \"endTime\": \"{{d10_12}}\",\n  \"attendees\": 3,\n  \"services\": [\n    {\n      \"servicioId\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"servicioId\": 2,\n      \"quantity\": 1\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "03 - Sala pegada: empieza cuando la otra termina (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 201', function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"miembroId\": 1,\n  \"salaId\": 2,\n  \"startTime\": \"{{d10_12}}\",\n  \"endTime\": \"{{d10_13}}\",\n  \"attendees\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "04a - Reserva de 45 minutos (409 RN-02)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Codigo RN-02', function () { pm.expect(pm.response.json().codigo).to.eql('RN-02'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"miembroId\": 1,\n  \"salaId\": 1,\n  \"startTime\": \"{{d10_14}}\",\n  \"endTime\": \"{{d10_1445}}\",\n  \"attendees\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "04b - Fuera del horario de la sede (409 RN-03)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Codigo RN-03', function () { pm.expect(pm.response.json().codigo).to.eql('RN-03'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"miembroId\": 1,\n  \"salaId\": 1,\n  \"startTime\": \"{{d10_2130}}\",\n  \"endTime\": \"{{d10_2230}}\",\n  \"attendees\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "05 - Cancelar con 31 h de anticipacion: sin cargo (reserva 13)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Sin cargo', function () { pm.expect(pm.response.json().cancellationFee).to.eql(0); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas/13/cancelar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas",
+                "13",
+                "cancelar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "06 - Cancelar con 5 h de anticipacion: 50 % (reserva 14)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Cargo 50 %', function () { pm.expect(pm.response.json().cancellationFee).to.eql(24500); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas/14/cancelar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas",
+                "14",
+                "cancelar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "07 - Cancelar con 1 h de anticipacion (409 RN-08, reserva 15)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Codigo RN-08', function () { pm.expect(pm.response.json().codigo).to.eql('RN-08'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas/15/cancelar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas",
+                "15",
+                "cancelar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "08 - Confirmar una reserva cancelada (409 RN-09, reserva 12)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Codigo RN-09', function () { pm.expect(pm.response.json().codigo).to.eql('RN-09'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenRecepcion}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas/12/confirmar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas",
+                "12",
+                "confirmar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "09 - MEMBER consulta la reserva de otro (403, luis ve la 6 de ana)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenLuis}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas",
+                "6"
+              ]
+            }
+          }
+        },
+        {
+          "name": "10a - Sin token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 401', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/sedes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sedes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "10b - Token alterado (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 401', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer abc.def.ghi"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sedes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sedes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "11 - Eliminar sala con reservas (409 RN-12)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Codigo RN-12', function () { pm.expect(pm.response.json().codigo).to.eql('RN-12'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/salas/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "salas",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "12 - Crear sede sin nombre (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Codigo VALIDACION', function () { pm.expect(pm.response.json().codigo).to.eql('VALIDACION'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sedes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sedes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"city\": \"Cali\",\n  \"address\": \"Calle 1\",\n  \"openingTime\": \"07:00:00\",\n  \"closingTime\": \"20:00:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "13a - Reserva simultanea A (usar scripts/concurrencia para correrlas a la vez)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 201', function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenRecepcion}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"miembroId\": 1,\n  \"salaId\": 4,\n  \"startTime\": \"{{d12_10}}\",\n  \"endTime\": \"{{d12_11}}\",\n  \"attendees\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "13b - Reserva simultanea B (en secuencia da 409; en paralelo una gana y otra pierde)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Codigo RN-01', function () { pm.expect(pm.response.json().codigo).to.eql('RN-01'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenRecepcion}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"miembroId\": 1,\n  \"salaId\": 4,\n  \"startTime\": \"{{d12_10}}\",\n  \"endTime\": \"{{d12_11}}\",\n  \"attendees\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "14 - Miembros suspendidos (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Todos SUSPENDED', function () { pm.response.json().forEach(function (m) { pm.expect(m.status).to.eql('SUSPENDED'); }); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenRecepcion}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/miembros?estado=SUSPENDED",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "miembros"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "SUSPENDED"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Otros endpoints",
+      "item": [
+        {
+          "name": "Listar salas de la sede 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenRecepcion}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/salas?sedeId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "salas"
+              ],
+              "query": [
+                {
+                  "key": "sedeId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Disponibilidad sede 1 (con proyector)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/disponibilidad?sedeId=1&fecha={{fechaConsulta}}&horaInicio=10:00&horaFin=12:00&capacidadMinima=4&equipamientoIds=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "disponibilidad"
+              ],
+              "query": [
+                {
+                  "key": "sedeId",
+                  "value": "1"
+                },
+                {
+                  "key": "fecha",
+                  "value": "{{fechaConsulta}}"
+                },
+                {
+                  "key": "horaInicio",
+                  "value": "10:00"
+                },
+                {
+                  "key": "horaFin",
+                  "value": "12:00"
+                },
+                {
+                  "key": "capacidadMinima",
+                  "value": "4"
+                },
+                {
+                  "key": "equipamientoIds",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Consumo de horas de ana",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/miembros/1/consumo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "miembros",
+                "1",
+                "consumo"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reservas de ana",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAna}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas?miembroId=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas"
+              ],
+              "query": [
+                {
+                  "key": "miembroId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Agregar servicio a la reserva 7 (PENDING)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenRecepcion}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas/7/servicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas",
+                "7",
+                "servicios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"servicioId\": 1,\n  \"quantity\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Confirmar reserva 7",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenRecepcion}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas/7/confirmar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas",
+                "7",
+                "confirmar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Completar reserva 7",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenRecepcion}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reservas/7/completar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reservas",
+                "7",
+                "completar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

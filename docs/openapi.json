@@ -1,0 +1,5436 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "CoWorkHub API",
+    "version": "1.0.0",
+    "description": "API REST para gestionar sedes, salas, miembros y reservas de una red de coworking."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Autenticacion"
+        ],
+        "summary": "Iniciar sesion",
+        "description": "Acceso: publico.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/perfil": {
+      "get": {
+        "tags": [
+          "Autenticacion"
+        ],
+        "summary": "Ver mi perfil",
+        "description": "Acceso: autenticado.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerfilResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/sedes": {
+      "get": {
+        "tags": [
+          "Sedes"
+        ],
+        "summary": "Listar sede",
+        "description": "Acceso: autenticado.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LocationResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Sedes"
+        ],
+        "summary": "Crear sede",
+        "description": "Acceso: ADMIN.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/sedes/{id}": {
+      "get": {
+        "tags": [
+          "Sedes"
+        ],
+        "summary": "Ver sede",
+        "description": "Acceso: autenticado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Sedes"
+        ],
+        "summary": "Actualizar sede",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Sedes"
+        ],
+        "summary": "Eliminar sede",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto"
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/salas": {
+      "get": {
+        "tags": [
+          "Salas"
+        ],
+        "summary": "Listar sala",
+        "description": "Acceso: autenticado.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoomResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Salas"
+        ],
+        "summary": "Crear sala",
+        "description": "Acceso: ADMIN.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoomRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/salas/{id}": {
+      "get": {
+        "tags": [
+          "Salas"
+        ],
+        "summary": "Ver sala",
+        "description": "Acceso: autenticado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Salas"
+        ],
+        "summary": "Actualizar sala",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoomRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Salas"
+        ],
+        "summary": "Eliminar sala",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto"
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/equipamientos": {
+      "get": {
+        "tags": [
+          "Equipamientos"
+        ],
+        "summary": "Listar equipamiento",
+        "description": "Acceso: autenticado.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EquipmentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Equipamientos"
+        ],
+        "summary": "Crear equipamiento",
+        "description": "Acceso: ADMIN.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EquipmentRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/equipamientos/{id}": {
+      "get": {
+        "tags": [
+          "Equipamientos"
+        ],
+        "summary": "Ver equipamiento",
+        "description": "Acceso: autenticado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Equipamientos"
+        ],
+        "summary": "Actualizar equipamiento",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EquipmentRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Equipamientos"
+        ],
+        "summary": "Eliminar equipamiento",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto"
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/servicios-adicionales": {
+      "get": {
+        "tags": [
+          "Servicios adicionales"
+        ],
+        "summary": "Listar servicio adicional",
+        "description": "Acceso: autenticado.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdditionalServiceResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Servicios adicionales"
+        ],
+        "summary": "Crear servicio adicional",
+        "description": "Acceso: ADMIN.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdditionalServiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdditionalServiceRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/servicios-adicionales/{id}": {
+      "get": {
+        "tags": [
+          "Servicios adicionales"
+        ],
+        "summary": "Ver servicio adicional",
+        "description": "Acceso: autenticado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdditionalServiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Servicios adicionales"
+        ],
+        "summary": "Actualizar servicio adicional",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdditionalServiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdditionalServiceRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Servicios adicionales"
+        ],
+        "summary": "Eliminar servicio adicional",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto"
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/planes": {
+      "get": {
+        "tags": [
+          "Planes"
+        ],
+        "summary": "Listar plan",
+        "description": "Acceso: autenticado.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MembershipPlanResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Planes"
+        ],
+        "summary": "Crear plan",
+        "description": "Acceso: ADMIN.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipPlanResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipPlanRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/planes/{id}": {
+      "get": {
+        "tags": [
+          "Planes"
+        ],
+        "summary": "Ver plan",
+        "description": "Acceso: autenticado.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipPlanResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Planes"
+        ],
+        "summary": "Actualizar plan",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipPlanResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipPlanRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Planes"
+        ],
+        "summary": "Eliminar plan",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto"
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/miembros": {
+      "get": {
+        "tags": [
+          "Miembros"
+        ],
+        "summary": "Listar miembros (?nombre, ?estado)",
+        "description": "Acceso: ADMIN/RECEPTIONIST.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Miembros"
+        ],
+        "summary": "Registrar miembro",
+        "description": "Acceso: ADMIN/RECEPTIONIST.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/miembros/{id}": {
+      "get": {
+        "tags": [
+          "Miembros"
+        ],
+        "summary": "Ver miembro",
+        "description": "Acceso: ADMIN/RECEPTIONIST o el propio miembro.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Miembros"
+        ],
+        "summary": "Actualizar miembro",
+        "description": "Acceso: ADMIN/RECEPTIONIST.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberUpdateRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Miembros"
+        ],
+        "summary": "Eliminar miembro",
+        "description": "Acceso: ADMIN.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto"
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/miembros/{id}/suspender": {
+      "patch": {
+        "tags": [
+          "Miembros"
+        ],
+        "summary": "Suspender miembro",
+        "description": "Acceso: ADMIN/RECEPTIONIST.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/miembros/{id}/activar": {
+      "patch": {
+        "tags": [
+          "Miembros"
+        ],
+        "summary": "Activar miembro",
+        "description": "Acceso: ADMIN/RECEPTIONIST.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/miembros/{id}/consumo": {
+      "get": {
+        "tags": [
+          "Miembros"
+        ],
+        "summary": "Consumo de horas del mes (?mes=yyyy-MM)",
+        "description": "Acceso: ADMIN/RECEPTIONIST o el propio miembro.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsumptionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/disponibilidad": {
+      "get": {
+        "tags": [
+          "Disponibilidad"
+        ],
+        "summary": "Buscar salas disponibles",
+        "description": "Acceso: autenticado.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoomResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reservas": {
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Crear reserva",
+        "description": "Acceso: ADMIN/RECEPTIONIST o MEMBER a su nombre.",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Listar reservas (?miembroId | ?salaId&fecha | ?estado)",
+        "description": "Acceso: ADMIN/RECEPTIONIST o MEMBER propio.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookingResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reservas/{id}": {
+      "get": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Ver reserva",
+        "description": "Acceso: ADMIN/RECEPTIONIST o dueno.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reservas/{id}/servicios": {
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Agregar servicio adicional",
+        "description": "Acceso: ADMIN/RECEPTIONIST o dueno.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingItemRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reservas/{id}/servicios/{servicioId}": {
+      "delete": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Quitar servicio adicional",
+        "description": "Acceso: ADMIN/RECEPTIONIST o dueno.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "servicioId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reservas/{id}/confirmar": {
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Confirmar reserva",
+        "description": "Acceso: ADMIN/RECEPTIONIST.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reservas/{id}/cancelar": {
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Cancelar reserva",
+        "description": "Acceso: ADMIN/RECEPTIONIST o dueno.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reservas/{id}/completar": {
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Completar reserva",
+        "description": "Acceso: ADMIN/RECEPTIONIST.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Correcto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o con formato invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Datos faltantes o con formato invalido",
+                  "codigo": "VALIDACION",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sin token, o token alterado o vencido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Sin token, o token alterado o vencido",
+                  "codigo": "NO_AUTENTICADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El usuario no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El usuario no tiene permiso",
+                  "codigo": "ACCESO_DENEGADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "El recurso no existe",
+                  "codigo": "NO_ENCONTRADO",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Se viola una regla de negocio o hay un duplicado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "error": "Se viola una regla de negocio o hay un duplicado",
+                  "codigo": "RN-01",
+                  "timestamp": "2030-06-03T13:00:00Z"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/actuator/health": {
+      "get": {
+        "tags": [
+          "Actuator"
+        ],
+        "summary": "Estado de la aplicacion",
+        "responses": {
+          "200": {
+            "description": "UP"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "codigo": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "admin"
+          },
+          "password": {
+            "type": "string",
+            "example": "Admin123"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "tipo": {
+            "type": "string"
+          },
+          "expiraEnSegundos": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PerfilResponse": {
+        "type": "object",
+        "properties": {
+          "usuario": {
+            "type": "string"
+          },
+          "rol": {
+            "type": "string"
+          },
+          "miembroId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "LocationRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "openingTime": {
+            "type": "string",
+            "format": "time"
+          },
+          "closingTime": {
+            "type": "string",
+            "format": "time"
+          }
+        },
+        "required": [
+          "name",
+          "city",
+          "address",
+          "openingTime",
+          "closingTime"
+        ]
+      },
+      "LocationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "openingTime": {
+            "type": "string",
+            "format": "time"
+          },
+          "closingTime": {
+            "type": "string",
+            "format": "time"
+          }
+        }
+      },
+      "EquipmentRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "EquipmentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "AdditionalServiceRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "unitPrice": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "unitPrice"
+        ]
+      },
+      "AdditionalServiceResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unitPrice": {
+            "type": "number"
+          }
+        }
+      },
+      "MembershipPlanRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "includedHoursPerMonth": {
+            "type": "integer"
+          },
+          "overageDiscount": {
+            "type": "integer"
+          },
+          "maxActiveBookings": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "includedHoursPerMonth",
+          "overageDiscount",
+          "maxActiveBookings"
+        ]
+      },
+      "MembershipPlanResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "includedHoursPerMonth": {
+            "type": "integer"
+          },
+          "overageDiscount": {
+            "type": "integer"
+          },
+          "maxActiveBookings": {
+            "type": "integer"
+          }
+        }
+      },
+      "RoomRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MEETING_ROOM",
+              "PRIVATE_OFFICE",
+              "DESK"
+            ]
+          },
+          "capacity": {
+            "type": "integer"
+          },
+          "hourlyRate": {
+            "type": "number"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "sedeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "equipamientoIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "capacity",
+          "hourlyRate",
+          "sedeId"
+        ]
+      },
+      "RoomResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "integer"
+          },
+          "hourlyRate": {
+            "type": "number"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "sedeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sedeName": {
+            "type": "string"
+          },
+          "equipamientos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EquipmentResponse"
+            }
+          }
+        }
+      },
+      "MemberRequest": {
+        "type": "object",
+        "properties": {
+          "documentNumber": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "documentNumber",
+          "fullName",
+          "email",
+          "planId",
+          "username",
+          "password"
+        ]
+      },
+      "MemberUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "fullName",
+          "email",
+          "planId"
+        ]
+      },
+      "MemberResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "documentNumber": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED"
+            ]
+          },
+          "planId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "planName": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "ConsumptionResponse": {
+        "type": "object",
+        "properties": {
+          "miembroId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mes": {
+            "type": "string"
+          },
+          "horasIncluidas": {
+            "type": "number"
+          },
+          "horasUsadas": {
+            "type": "number"
+          },
+          "horasRestantes": {
+            "type": "number"
+          },
+          "horasExcedentes": {
+            "type": "number"
+          }
+        }
+      },
+      "BookingItemRequest": {
+        "type": "object",
+        "properties": {
+          "servicioId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "quantity": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "servicioId",
+          "quantity"
+        ]
+      },
+      "BookingItemResponse": {
+        "type": "object",
+        "properties": {
+          "servicioId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "servicioNombre": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "appliedUnitPrice": {
+            "type": "number"
+          },
+          "subtotal": {
+            "type": "number"
+          }
+        }
+      },
+      "BookingRequest": {
+        "type": "object",
+        "properties": {
+          "miembroId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "salaId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2030-06-03T10:00:00"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2030-06-03T12:00:00"
+          },
+          "attendees": {
+            "type": "integer"
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingItemRequest"
+            }
+          }
+        },
+        "required": [
+          "miembroId",
+          "salaId",
+          "startTime",
+          "endTime",
+          "attendees"
+        ]
+      },
+      "BookingResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "miembroId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "miembroNombre": {
+            "type": "string"
+          },
+          "salaId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "salaNombre": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "attendees": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "CONFIRMED",
+              "CANCELLED",
+              "COMPLETED"
+            ]
+          },
+          "roomCost": {
+            "type": "number"
+          },
+          "servicesCost": {
+            "type": "number"
+          },
+          "totalCost": {
+            "type": "number"
+          },
+          "cancellationFee": {
+            "type": "number"
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BookingItemResponse"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
