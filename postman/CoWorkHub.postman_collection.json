@@ -758,7 +758,7 @@
           }
         },
         {
-          "name": "13a - Reserva simultanea A (usar scripts/concurrencia para correrlas a la vez)",
+          "name": "13a - Reserva simultanea: primera reserva (201)",
           "event": [
             {
               "listen": "test",
@@ -799,7 +799,7 @@
           }
         },
         {
-          "name": "13b - Reserva simultanea B (en secuencia da 409; en paralelo una gana y otra pierde)",
+          "name": "13b - Reserva simultanea: misma sala y horario (409 RN-01)",
           "event": [
             {
               "listen": "test",

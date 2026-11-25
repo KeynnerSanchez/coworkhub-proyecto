@@ -180,10 +180,7 @@ En Swagger: `POST /auth/login` > copia el `token` > boton **Authorize** > pegalo
 curl -X POST http://localhost:8080/auth/login -H "Content-Type: application/json" -d "{\"username\":\"admin\",\"password\":\"Admin123\"}"
 curl http://localhost:8080/api/sedes -H "Authorization: Bearer PEGA_AQUI_EL_TOKEN"
 ```
-5. **Concurrencia** (dos reservas iguales a la vez; debe salir una 201 y una 409):
-   - Windows: `powershell -ExecutionPolicy Bypass -File scripts\concurrencia.ps1`
-   - Git Bash / Linux / Mac: `bash scripts/concurrencia.sh`
-6. **Pruebas unitarias**: `mvn test` (o clic derecho en `src/test` > *Run 'All Tests'* en IntelliJ).
+5. **Pruebas unitarias**: `mvn test` (o clic derecho en `src/test` > *Run 'All Tests'* en IntelliJ).
 
 ## 10. Contrato OpenAPI
 
@@ -351,7 +348,7 @@ libres = 1 h, excedentes = 2 h, costo = 2 x 40.000 x 0,90 = **72.000**.
 Si dos personas reservan la misma sala a la vez, las dos podrian pasar la validacion de cruce y quedar duplicadas.
 Para evitarlo, `create` es `@Transactional` y **lo primero** que hace es leer la sala con **bloqueo pesimista** (`select ... for update`, `RoomRepository.findByIdForUpdate`).
 La segunda peticion espera a que termine la primera y entonces si ve la reserva nueva: recibe **409 RN-01**.
-Se prueba con `scripts/concurrencia.ps1` o `scripts/concurrencia.sh`.
+En Postman, los escenarios 13a y 13b envian la misma reserva: la primera responde 201 y la segunda 409 con `RN-01`.
 
 ## 12.9 Endpoints
 
@@ -396,7 +393,6 @@ coworkhub/
 |-- docs/openapi.json, docs/evidencias/
 |-- frontend/            pagina web (HTML, CSS y JavaScript)
 |-- postman/CoWorkHub.postman_collection.json
-|-- scripts/concurrencia.ps1, concurrencia.sh
 `-- src/
     |-- main/java/com/coworkhub/
     |   |-- CoWorkHubApplication.java
